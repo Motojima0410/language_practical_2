@@ -1,0 +1,114 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+}
+
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #2c3e50;
+  color: #fff;
+  padding: 12px 20px;
+  z-index: 1000;
+}
+
+main {
+  padding: 6px 12px;
+  margin-top: 70px;
+}
+
+.card-container {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.card {
+  display: block;
+  width: 200px;
+  padding: 16px;
+  border: 1px solid #ccc;
+  text-decoration: none;
+  color: #333;
+}
+
+.card:hover {
+  background: #f5f5f5;
+}
+
+.input-area {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.input-area > div:not(.output-area) {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.input-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.option-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.option-row label {
+  white-space: nowrap;
+}
+
+.input-block br {
+  display: none;
+}
+
+.input-block input[type="radio"],
+.input-block input[type="checkbox"] {
+  margin-right: 4px;
+}
+
+.input-block label {
+  display:inline;
+  margin-right: 16px;
+}
+
+.input-block button {
+  width: fit-content;
+}
+
+.output-area {
+  border-left: 2px solid #ccc;
+  padding-left: 20px;
+  min-width: 250px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background: #f0f0f0;
+}
+
+footer {
+  background: #333;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  margin-top: 40px;
+}
