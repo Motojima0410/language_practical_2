@@ -1,57 +1,61 @@
-const nameButton = document.getElementById("button-name");
-const outputName = document.getElementById("output-name");
+function registerName() {
+  const nameInput = document.getElementById("user-name");
+  document.getElementById("output-name").textContent = "名前：" + nameInput.value;
+}
 
-nameButton.addEventListener("click", function () {
-  const nameInput = document.getElementById("user-name").value;
-  outputName.textContent = "名前：" + nameInput;
-});
+function registerInquiry() {
+  const inquiryInput = document.getElementById("inquiry-content");
+  document.getElementById("output-inquiry").textContent = "お問い合わせ内容：" + inquiryInput.value;
+}
 
-const inquiryButton = document.getElementById("button-inquiry");
-const outputInquiry = document.getElementById("output-inquiry");
-
-inquiryButton.addEventListener("click", function () {
-  const inquiryInput = document.getElementById("inquiry-content").value;
-  outputInquiry.textContent = "お問い合わせ内容：" + inquiryInput;
-});
-
-const genderButton = document.getElementById("button-gender");
-const outputGender = document.getElementById("output-gender");
-
-genderButton.addEventListener("click", function () {
+function registerGender() {
   const genderInputs = document.getElementsByName("gender");
-  outputGender.textContent = "性別：";
+  let result = "性別：";
   for (let i = 0; i < genderInputs.length; i++) {
     if (genderInputs[i].checked) {
-      outputGender.textContent = "性別：" + genderInputs[i].value;
+      result = "性別：" + genderInputs[i].value;
     }
   }
-});
+  document.getElementById("output-gender").textContent = result;
+}
 
-
-
-
-const typeButton = document.getElementById("button-type");
-const outputType = document.getElementById("output-type");
-
-typeButton.addEventListener("click", function () {
+function registerType() {
   const typeInputs = document.getElementsByName("inquiry-type");
   let selectedTypes = [];
-
   for (let i = 0; i < typeInputs.length; i++) {
     if (typeInputs[i].checked) {
       selectedTypes.push(typeInputs[i].value);
     }
   }
+  document.getElementById("output-type").textContent = "お問い合わせ種別：" + selectedTypes.join(", ");
+}
 
-  outputType.textContent = "お問い合わせ種別：" + selectedTypes.join(", ");
-});
+function registerAddress() {
+  const addressInput = document.getElementById("address");
+  document.getElementById("output-address").textContent = "居住地：" + addressInput.value;
+}
 
 
-const addressButton = document.getElementById("button-address");
-const outputAddress = document.getElementById("output-address");
+const registerButtons = document.getElementsByClassName("register-button");
 
-addressButton.addEventListener("click", function () {
-  const addressSelect = document.getElementById("address");
-  const selectedAddress = addressSelect.value;
-  outputAddress.textContent = "居住地：" + selectedAddress;
-});
+for (const button of registerButtons) {
+  button.addEventListener("click", function () {
+    switch (this.id) {
+      case "button-name":
+        registerName();
+        break;
+      case "button-inquiry":
+        registerInquiry();
+        break;
+      case "button-gender":
+        registerGender();
+        break;
+      case "button-type":
+        registerType();
+        break;
+      case "button-address":
+        registerAddress();
+        break;
+    }
+  });
+}

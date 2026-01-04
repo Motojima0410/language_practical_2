@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>B画面-入力画面</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="layout.css">
+  <link rel="stylesheet" href="pageB.css">
 </head>
 
 <body>
@@ -20,61 +21,70 @@
     <div class="main-content">
       <h2>必要な情報を入力してください</h2>
 
-      <div class="input-area">
-        <div class="input-block">
-          <label for="user-name">名前：</label>
-          <input type="text" id="user-name" name="user-name">
-          <button type="button" id="button-name">登録</button>
-        </div>
+      <div class="form-wrapper">
+        <div class="input-area">
+          <div class="input-block">
+            <label for="user-name">名前：</label>
+            <input type="text" id="user-name" name="user-name">
+            <button type="button" id="button-name" class="register-button">登録</button>
+          </div>
 
           <div class="input-block">
             <label for="inquiry-content">お問い合わせ内容</label>
             <textarea id="inquiry-content" name="inquiry-content"></textarea>
-            <button type="button" id="button-inquiry">登録</button>
-
+            <button type="button" id="button-inquiry" class="register-button">登録</button>
           </div>
 
-        <div class="input-block">
-          <span>性別：</span>
-          <div class="option-row">
-            <input type="radio" id="gender-male" name="gender" value="男性">
-            <label for="gender-male">男性</label>
-            <input type="radio" id="gender-female" name="gender" value="女性">
-            <label for="gender-female">女性</label>
+          <div class="input-block">
+            <span>性別：</span>
+            <div class="option-row">
+              <label class="option-item">
+                <input type="radio" id="gender-male" name="gender" value="男性">男性
+              </label>
+              <label class="option-item">
+                <input type="radio" id="gender-female" name="gender" value="女性">女性
+              </label>
+            </div>
+
+            <button type="button" id="button-gender" class="register-button">登録</button>
           </div>
 
-          <button type="button" id="button-gender">登録</button>
-        </div>
+          <div class="input-block">
+            <span>お問い合わせ種別：</span>
+            <div class="option-row">
+              <label class="option-item">
+                <input type="checkbox" id="type-service" name="inquiry-type" value="サービスについて">サービスについて
+              </label>
 
-        <div class="input-block">
-          <span>お問い合わせ種別：</span>
-          <div class="option-row">
-            <input type="checkbox" id="type-service" name="inquiry-type" value="サービスについて">
-            <label for="type-service">サービスについて</label>
-            <input type="checkbox" id="type-price" name="inquiry-type" value="料金について">
-            <label for="type-price">料金について</label>
-            <input type="checkbox" id="type-other" name="inquiry-type" value="その他">
-            <label for="type-other">その他</label>
+              <label class="option-item">
+                <input type="checkbox" id="type-price" name="inquiry-type" value="料金について">料金について
+              </label>
+
+              <label class="option-item">
+                <input type="checkbox" id="type-other" name="inquiry-type" value="その他">その他
+              </label>
+            </div>
+
+            <button type="button" id="button-type" class="register-button">登録</button>
           </div>
-          <button type="button" id="button-type">登録</button>
-        </div>
 
-        <div class="input-block">
-          <label for="address">居住地</label>
-          <select name="address" id="address">
-            <option value="北海道">北海道</option>
-            <option value="東北">東北</option>
-            <option value="関東">関東</option>
-            <option value="近畿">近畿</option>
-            <option value="中部">中部</option>
-            <option value="四国">四国</option>
-            <option value="九州">九州</option>
-          </select>
-          <button type="button" id="button-address">登録</button>
+          <div class="input-block">
+            <label for="address">居住地</label>
+            <select name="address" id="address">
+              <option value="北海道">北海道</option>
+              <option value="東北">東北</option>
+              <option value="関東">関東</option>
+              <option value="近畿">近畿</option>
+              <option value="中部">中部</option>
+              <option value="四国">四国</option>
+              <option value="九州">九州</option>
+            </select>
+            <button type="button" id="button-address" class="register-button">登録</button>
+          </div>
         </div>
 
         <div class="output-area">
-          <h3>入力結果表示エリア</h3>
+          <h3>入力された内容</h3>
           <p id="output-name">名前：</p>
           <p id="output-inquiry">お問い合わせ内容：</p>
           <p id="output-gender">性別：</p>
