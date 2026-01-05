@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>C画面-一覧画面</title>
+  <link rel="stylesheet" href="layout.css">
+  <link rel="stylesheet" href="pageC.css">
+</head>
+
+<body>
+  <header>
+    <div class="header-inner">
+      <a href="index_pageA.html" class="nav-icon">🏠</a>
+      <h1>メインメニュー</h1>
+    </div>
+  </header>
+
+
+  <main>
+    <div class="main-content">
+      <h2>登録情報一覧</h2>
+      <table id="data-table">
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>内容</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+
+        <tbody id="table-body">
+          <tr>
+            <td>1</td>
+            <td>入力された内容</td>
+            <td>
+              <button type="button" class="delete-btn">削除</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <button type="button" id="add-row-btn">行を追加</button>
+    </div>
+  </main>
+
+  <footer>
+    <a href="index_pageA.html" class="footer-icon">🏠</a>
+    <p>&copy; 2025 Web App Project</p>
+  </footer>
+
+  <script src="pageC.js"></script>
+</body>
+</html>
