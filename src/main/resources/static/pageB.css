@@ -1,0 +1,54 @@
+.form-wrapper {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.input-area {
+  display: flex;
+  gap: 16px;
+  flex-direction: column;
+}
+
+.input-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.option-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.option-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.input-block br {
+  display: none;
+}
+
+.input-block input[type="radio"],
+.input-block input[type="checkbox"] {
+  margin-right: 4px;
+}
+
+.input-block label {
+  display:inline;
+  margin-right: 16px;
+}
+
+.input-block button {
+  width: fit-content;
+}
+
+.output-area {
+  border-left: 2px solid #ccc;
+  padding-left: 20px;
+  min-width: 250px;
+}
