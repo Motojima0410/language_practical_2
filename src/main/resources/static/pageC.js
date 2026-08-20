@@ -1,46 +1,53 @@
 const addRowBtn = document.getElementById("add-row-btn");
+const deleteRowBtn = document.getElementById("delete-row-btn");
 const tableBody = document.getElementById("table-body");
 
+//連番を付けなおす
 function renumberRows() {
   const rows = tableBody.children;
+
   for (let i = 0; i < rows.length; i++) {
     rows[i].children[0].textContent = i + 1;
   }
 }
 
-function attachDeleteEvent(deleteBtn, tr) {
-  deleteBtn.addEventListener("click", function () {
-    tableBody.removeChild(tr);
-    renumberRows();
-  });
-}
-
-const initialDeleteButtons = document.querySelectorAll(".delete-btn");
-initialDeleteButtons.forEach(function (btn) {
-  const tr = btn.closest("tr");
-  attachDeleteEvent(btn, tr);
-});
-
+//行を追加
 addRowBtn.addEventListener("click", function () {
   const tr = document.createElement("tr");
   const tdNo = document.createElement("td");
-  const tdContent = document.createElement("td");
-  const tdActions = document.createElement("td");
+  const tdCheck = document.createElement("td");
+  const tdInput = document.createElement("td");
+  const checkBox = document.createElement("input");
+  const input = document.createElement("input");
 
   tdNo.textContent = tableBody.children.length + 1;
-  tdContent.textContent = "行" + (tableBody.children.length + 1);
 
-  const deleteBtn = document.createElement("button");
-  deleteBtn.textContent = "削除";
-  deleteBtn.type = "button";
-  deleteBtn.classList.add("delete-btn");
-  attachDeleteEvent(deleteBtn, tr);
+  checkBox.type = "checkbox";
+  checkBox.classList.add("row-check");
+  tdCheck.appendChild(checkBox);
 
-  tdActions.appendChild(deleteBtn);
+  input.type = "text";
+  input.classList.add("row-input");
+  tdInput.appendChild(input);
 
   tr.appendChild(tdNo);
-  tr.appendChild(tdContent);
-  tr.appendChild(tdActions);
+  tr.appendChild(tdCheck);
+  tr.appendChild(tdInput);
 
   tableBody.appendChild(tr);
+});
+
+//行を削除
+deleteRowBtn.addEventListener("click", function () {
+  const rows = tableBody.querySelectorAll("tr");
+
+  rows.forEach(function (row) {
+    const checkBox = row.querySelector(".row-check");
+
+    if (checkBox.checked) {
+      tableBody.removeChild(row);
+    }
+  });
+
+  renumberRows();
 });
