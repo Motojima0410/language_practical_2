@@ -53,17 +53,28 @@
     let allSkills = [];
 
     //ユーザー取得
-    document.getElementById("getButton").addEventListener("click", () => {
-      fetch("/api/users")
+    function getUsers() {
+      const keyword = document.getElementById("filter").value;
+      let url = "/api/users";
+
+      if (keyword.trim() !== "") {
+        url = "/api/users?name=" + encodeURIComponent(keyword);
+      }
+
+      fetch(url)
         .then(response => response.json())
         .then(data => {
           allUsers = data;
           renderUsers();
         });
+    }
+
+    document.getElementById("getButton").addEventListener("click", () => {
+      getUsers();
     });
 
     document.getElementById("filter").addEventListener("input", () => {
-      renderUsers();
+      getUsers();
     });
 
     //スキル一覧をテーブルに表示
@@ -214,107 +225,94 @@
       const userTable = document.getElementById("userTable");
       userTable.innerHTML = "";
 
-      const keyword = document.getElementById("filter").value;
-      let regex;
+      allUsers.forEach(user => {
+        const row = document.createElement("tr");
 
-      try {
-        regex = new RegExp(keyword);
-      } catch (e) {
-        alert("正規表現が不正です");
-        return;
-      }
+        //ユーザー行クリック時：該当ユーザーのスキル取得
+        row.addEventListener("click", () => {
+          fetch(`/api/skills?userId=${user.id}`)
+            .then(response => response.json())
+            .then(skills => {
+              const skillList = document.getElementById("skillList");
+              skillList.innerHTML = "";
 
-      allUsers
-        .filter(user => regex.test(user.name))
-        .forEach(user => {
-          const row = document.createElement("tr");
-
-          //ユーザー行クリック時：該当ユーザーのスキル取得
-          row.addEventListener("click", () => {
-            fetch(`/api/skills?userId=${user.id}`)
-              .then(response => response.json())
-              .then(skills => {
-                const skillList = document.getElementById("skillList");
-                skillList.innerHTML = "";
-
-                skills.forEach(skill => {
-                  const li = document.createElement("li");
-                  li.textContent = skill;
-                  skillList.appendChild(li);
-                });
+              skills.forEach(skill => {
+                const li = document.createElement("li");
+                li.textContent = skill;
+                skillList.appendChild(li);
               });
-          });
-
-
-          const idCell = document.createElement("td");
-          idCell.textContent = user.id;
-
-          const nameCell = document.createElement("td");
-          nameCell.textContent = user.name;
-
-          const editCell = document.createElement("td");
-          const editButton = document.createElement("button");
-          editButton.textContent = "編集";
-
-          //編集ボタン押下時：ユーザー名更新
-          editButton.addEventListener("click", (event) => {
-            event.stopPropagation();
-
-            const newName = prompt("新しい名前を入力してください", user.name);
-
-            if (newName === null) {
-              return;
-            }
-
-            if (newName.trim() === "") {
-              alert("名前を入力してください");
-              return;
-            }
-
-            fetch(`/api/users/${user.id}`, {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify({ name: newName })
-            })
-            .then(response => response.text())
-            .then(data => {
-              alert(data);
-              document.getElementById("getButton").click();
             });
-          });
-
-          editCell.appendChild(editButton);
-
-          const deleteCell = document.createElement("td");
-          const deleteButton = document.createElement("button");
-          deleteButton.textContent = "削除";
-
-          //削除ボタン押下時：該当ユーザー削除
-          deleteButton.addEventListener("click", (event) => {
-            event.stopPropagation();
-
-            fetch(`/api/users/${user.id}`, {method: "DELETE"})
-            .then(response => response.text())
-            .then(data => {
-              alert(data);
-              document.getElementById("getButton").click();
-              document.getElementById("getSkillsButton").click();
-              document.getElementById("skillList").innerHTML = "";
-            });
-          });
-
-          deleteCell.appendChild(deleteButton);
-
-          row.appendChild(idCell);
-          row.appendChild(nameCell);
-          row.appendChild(editCell);
-          row.appendChild(deleteCell);
-
-          userTable.appendChild(row);
         });
-    };
+
+        const idCell = document.createElement("td");
+        idCell.textContent = user.id;
+
+        const nameCell = document.createElement("td");
+        nameCell.textContent = user.name;
+
+        const editCell = document.createElement("td");
+        const editButton = document.createElement("button");
+        editButton.textContent = "編集";
+
+        //編集ボタン押下時：ユーザー名更新
+        editButton.addEventListener("click", (event) => {
+          event.stopPropagation();
+
+          const newName = prompt("新しい名前を入力してください", user.name);
+
+          if (newName === null) {
+            return;
+          }
+
+          if (newName.trim() === "") {
+            alert("名前を入力してください");
+            return;
+          }
+
+          fetch(`/api/users/${user.id}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ name: newName })
+          })
+          .then(response => response.text())
+          .then(data => {
+            alert(data);
+            document.getElementById("getButton").click();
+          });
+        });
+
+        editCell.appendChild(editButton);
+
+        const deleteCell = document.createElement("td");
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "削除";
+
+        //削除ボタン押下時：該当ユーザー削除
+        deleteButton.addEventListener("click", (event) => {
+          event.stopPropagation();
+
+          fetch(`/api/users/${user.id}`, {method: "DELETE"})
+          .then(response => response.text())
+          .then(data => {
+            alert(data);
+            document.getElementById("getButton").click();
+            document.getElementById("getSkillsButton").click();
+            document.getElementById("skillList").innerHTML = "";
+          });
+        });
+
+        deleteCell.appendChild(deleteButton);
+
+        row.appendChild(idCell);
+        row.appendChild(nameCell);
+        row.appendChild(editCell);
+        row.appendChild(deleteCell);
+
+        userTable.appendChild(row);
+      });
+    }
 
     document.getElementById("getButton").click();
 
