@@ -32,8 +32,8 @@ public class Example {
       if (name == null || name.trim().equals("")) {
         statement = connection.prepareStatement("SELECT id, name FROM users order by id");
       } else {
-        statement = connection.prepareStatement("SELECT id, name FROM users where name like ? order by id");
-        statement.setString(1, "%" + name + "%");
+        statement = connection.prepareStatement("SELECT id, name FROM users where name ~ ? order by id");
+        statement.setString(1, name);
       }
 
       ResultSet resultSet = statement.executeQuery();
