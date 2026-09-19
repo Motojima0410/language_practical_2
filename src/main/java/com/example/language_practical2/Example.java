@@ -145,16 +145,21 @@ public class Example {
   }
 
   @GetMapping("/api/skills/all")
-  public List<java.util.Map<String, Object>> getAllSkills() throws SQLException {
-    List<java.util.Map<String, Object>> list = new ArrayList<>();
+  public List<java.util.Map<String, Object>> getAllSkills(
+    @RequestParam(value = "skill", required = false) String skill) throws SQLException {
+      List<java.util.Map<String, Object>> list = new ArrayList<>();
 
     Connection connection = DriverManager.getConnection(
       "jdbc:postgresql://localhost:5432/postgres", "postgres", "Motomoto0410"
     );
 
-    PreparedStatement statement = connection.prepareStatement(
-      "select skills.id, skills.skill, users.name from skills join users on skills.user_id = users.id order by skills.id"
-    );
+    PreparedStatement statement;
+    if (skill == null || skill.trim().equals("")) {
+      statement = connection.prepareStatement("SELECT skills.id, skills.skill, users.name FROM skills INNER JOIN users ON skills.user_id = users.id order by skills.id");
+    } else {
+      statement = connection.prepareStatement("SELECT skills.id, skills.skill, users.name FROM skills INNER JOIN users ON skills.user_id = users.id where skills.skill ~ ? order by skills.id");
+      statement.setString(1, skill);
+    }
 
     ResultSet resultSet = statement.executeQuery();
 

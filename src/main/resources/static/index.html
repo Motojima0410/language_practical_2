@@ -24,6 +24,7 @@
   <h2>スキル一覧</h2>
   <ul id="skillList"></ul>
   <button id="getSkillsButton">スキル取得</button>
+  <input type="text" id="skillFilter" placeholder="スキルで絞り込み">
   <button id="sortBySkillButton">スキル順</button>
   <button id="sortByNameButton">名前順</button>
 
@@ -199,13 +200,28 @@
     });
 
     //全スキル取得
-    document.getElementById("getSkillsButton").addEventListener("click", () => {
-      fetch("/api/skills/all")
+    function getAllSkills() {
+      const keyword = document.getElementById("skillFilter").value;
+      let url = "/api/skills/all";
+
+      if (keyword.trim() !== "") {
+        url = "/api/skills/all?skill=" + encodeURIComponent(keyword);
+      }
+
+      fetch(url)
         .then(response => response.json())
         .then(data => {
           allSkills = data;
           renderSkills();
         });
+    };
+
+    document.getElementById("getSkillsButton").addEventListener("click", () => {
+    getAllSkills();
+    });
+
+    document.getElementById("skillFilter").addEventListener("input", () => {
+      getAllSkills();
     });
 
     //スキル名でソート
@@ -315,6 +331,7 @@
     }
 
     document.getElementById("getButton").click();
+    document.getElementById("getSkillsButton").click();
 
   </script>
 
