@@ -22,24 +22,32 @@ import org.springframework.web.bind.annotation.PutMapping;
 public class Example {
 
   @GetMapping("/api/users")
-  public List<java.util.Map<String, Object>> getUsers() throws SQLException {
-    List<java.util.Map<String, Object>> users = new ArrayList<>();
+  public List<java.util.Map<String, Object>> getUsers(
+    @RequestParam(value = "name", required = false) String name) throws SQLException {
+      List<java.util.Map<String, Object>> users = new ArrayList<>();
 
-    Connection connection = DriverManager.getConnection(
-      "jdbc:postgresql://localhost:5432/postgres", "postgres",  "Motomoto0410");
+      Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "Motomoto0410");
 
-    PreparedStatement statement = connection.prepareStatement("SELECT id, name FROM users order by id");
-    ResultSet resultSet = statement.executeQuery();
+      PreparedStatement statement;
+      if (name == null || name.trim().equals("")) {
+        statement = connection.prepareStatement("SELECT id, name FROM users order by id");
+      } else {
+        statement = connection.prepareStatement("SELECT id, name FROM users where name ~ ? order by id");
+        statement.setString(1, name);
+      }
 
-    while (resultSet.next()) {
-      java.util.Map<String, Object> user = new java.util.HashMap<>();
-      user.put("id", resultSet.getInt("id"));
-      user.put("name", resultSet.getString("name"));
-      users.add(user);
+      ResultSet resultSet = statement.executeQuery();
+
+      while (resultSet.next()) {
+        java.util.Map<String, Object> user = new java.util.HashMap<>();
+        user.put("id", resultSet.getInt("id"));
+        user.put("name", resultSet.getString("name"));
+        users.add(user);
+      }
+
+      return users;
     }
 
-    return users;
-  }
 
   @PostMapping("/api/users")
   public String registerUser(@RequestBody java.util.Map<String, String> body) throws SQLException {
@@ -137,16 +145,21 @@ public class Example {
   }
 
   @GetMapping("/api/skills/all")
-  public List<java.util.Map<String, Object>> getAllSkills() throws SQLException {
-    List<java.util.Map<String, Object>> list = new ArrayList<>();
+  public List<java.util.Map<String, Object>> getAllSkills(
+    @RequestParam(value = "skill", required = false) String skill) throws SQLException {
+      List<java.util.Map<String, Object>> list = new ArrayList<>();
 
     Connection connection = DriverManager.getConnection(
       "jdbc:postgresql://localhost:5432/postgres", "postgres", "Motomoto0410"
     );
 
-    PreparedStatement statement = connection.prepareStatement(
-      "select skills.id, skills.skill, users.name from skills join users on skills.user_id = users.id order by skills.id"
-    );
+    PreparedStatement statement;
+    if (skill == null || skill.trim().equals("")) {
+      statement = connection.prepareStatement("SELECT skills.id, skills.skill, users.name FROM skills INNER JOIN users ON skills.user_id = users.id order by skills.id");
+    } else {
+      statement = connection.prepareStatement("SELECT skills.id, skills.skill, users.name FROM skills INNER JOIN users ON skills.user_id = users.id where skills.skill ~ ? order by skills.id");
+      statement.setString(1, skill);
+    }
 
     ResultSet resultSet = statement.executeQuery();
 

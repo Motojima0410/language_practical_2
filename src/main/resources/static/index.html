@@ -1,41 +1,340 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>A画面-トップページ</title>
-    <link rel="stylesheet" href="layout.css" />
-    <link rel="stylesheet" href="pageA.css" />
-  </head>
+<head>
+  <meta charset="UTF-8">
+  <title>ユーザーリスト</title>
+</head>
 
-  <body>
-    <header>
-      <div class="header-inner">
-        <a href="index.html" class="nav-icon">🏠</a>
-        <h1>メインメニュー</h1>
-      </div>
-    </header>
+<body>
+  <h1>ユーザーリスト</h1>
+  <button id="getButton">データを取得</button>
+  <input type="text" id="filter" placeholder="名前で絞り込み">
+  <table border="1">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>名前</th>
+        <th>編集</th>
+        <th>削除</th>
+      </tr>
+    </thead>
+    <tbody id="userTable"></tbody>
+  </table>
+  
+  <h2>スキル一覧</h2>
+  <ul id="skillList"></ul>
+  <button id="getSkillsButton">スキル取得</button>
+  <input type="text" id="skillFilter" placeholder="スキルで絞り込み">
+  <button id="sortBySkillButton">スキル順</button>
+  <button id="sortByNameButton">名前順</button>
 
-    <main>
-      <h2>メニューを選択してください</h2>
-      <div class="card-container">
-        <a href="pageB.html" class="card">
-          <div class="card-visual"></div>
-          <h3>お問い合わせフォーム</h3>
-          <p>お問い合わせ内容を入力してください</p>
-        </a>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>スキル</th>
+        <th>名前</th>
+        <th>編集</th>
+        <th>削除</th>
+      </tr>
+    </thead>
+    <tbody id="skillsTable"></tbody>
+  </table>
 
-        <a href="pageC.html" class="card">
-          <div class="card-visual"></div>
-          <h3>データ一覧</h3>
-          <p>登録された情報の一覧を表示します</p>
-        </a>
-      </div>
-    </main>
+  <h2>ユーザー登録</h2>
+  <input type="text" id="name" placeholder="名前を入力">
+  <button onclick="registerUser()">登録</button>
 
-    <footer>
-      <a href="index.html" class="footer-icon">🏠</a>
-      <p>&copy; 2025 Web App Project</p>
-    </footer>
-  </body>
+  <h2>スキル登録</h2>
+  <input type="text" id="userId" placeholder="ユーザーID（数字）">
+  <input type="text" id="skill" placeholder="スキル名">
+  <button id="addSkillButton">登録</button>
+
+  <script>
+    let allUsers = [];
+    let allSkills = [];
+
+    //ユーザー取得
+    function getUsers() {
+      const keyword = document.getElementById("filter").value;
+      let url = "/api/users";
+
+      if (keyword.trim() !== "") {
+        url = "/api/users?name=" + encodeURIComponent(keyword);
+      }
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          allUsers = data;
+          renderUsers();
+        });
+    }
+
+    document.getElementById("getButton").addEventListener("click", () => {
+      getUsers();
+    });
+
+    document.getElementById("filter").addEventListener("input", () => {
+      getUsers();
+    });
+
+    //スキル一覧をテーブルに表示
+    function renderSkills() {
+      const table = document.getElementById("skillsTable");
+      table.innerHTML = "";
+
+      allSkills.forEach(item => {
+        const row = document.createElement("tr");
+
+        const skillCell = document.createElement("td");
+        skillCell.textContent = item.skill;
+
+        const nameCell = document.createElement("td");
+        nameCell.textContent = item.name;
+
+        const editCell = document.createElement("td");
+        const editButton = document.createElement("button");
+        editButton.textContent = "編集";
+
+        //編集ボタン押下時：該当スキル更新
+        editButton.addEventListener("click", () => {
+          const newSkill = prompt("新しいスキルを入力してください", item.skill);
+
+          if (newSkill === null) {
+            return;
+          }
+
+          if (newSkill.trim() === "") {
+            alert("スキルを入力してください");
+            return;
+          }
+
+          fetch(`/api/skills/${item.id}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ skill: newSkill })
+          })
+          .then(response => response.text())
+          .then(data => {
+            alert(data);
+            document.getElementById("getSkillsButton").click();
+          });
+        });
+
+        editCell.appendChild(editButton);
+
+        const deleteCell = document.createElement("td");
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "削除";
+
+        //削除ボタン押下時：該当スキル削除
+        deleteButton.addEventListener("click", () => {
+          fetch(`/api/skills/${item.id}`, { method: "DELETE" })
+            .then(response => response.text())
+            .then(data => {
+              alert(data);
+              document.getElementById("getSkillsButton").click();
+            });
+        });
+
+        deleteCell.appendChild(deleteButton);
+        row.appendChild(skillCell);
+        row.appendChild(nameCell);
+        row.appendChild(editCell);
+        row.appendChild(deleteCell);
+
+        table.appendChild(row);
+      });
+    };
+
+    //ユーザー登録
+    function registerUser() {
+      const name = document.getElementById("name").value;
+
+      if (name.trim() === "") {
+        alert("名前を入力してください");
+        return;
+      }
+
+      fetch("/api/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ name: name })
+      })
+      .then(response => response.text())
+      .then(data => {
+        alert(data);
+        document.getElementById("name").value = "";
+        document.getElementById("getButton").click();
+      });
+    }
+
+    //スキル登録
+    document.getElementById("addSkillButton").addEventListener("click", () => {
+      const userId = document.getElementById("userId").value;
+      const skill = document.getElementById("skill").value;
+
+      if (userId.trim() === "" || skill.trim() === "") {
+        alert("ユーザーIDとスキルを入力してください");
+        return;
+      }
+
+      fetch("/api/skills", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ userId: userId, skill: skill })
+      })
+      .then(response => response.text())
+      .then(data => {
+        alert(data);
+        document.getElementById("userId").value = "";
+        document.getElementById("skill").value = "";
+        document.getElementById("getSkillsButton").click();
+      })
+    });
+
+    //全スキル取得
+    function getAllSkills() {
+      const keyword = document.getElementById("skillFilter").value;
+      let url = "/api/skills/all";
+
+      if (keyword.trim() !== "") {
+        url = "/api/skills/all?skill=" + encodeURIComponent(keyword);
+      }
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          allSkills = data;
+          renderSkills();
+        });
+    };
+
+    document.getElementById("getSkillsButton").addEventListener("click", () => {
+    getAllSkills();
+    });
+
+    document.getElementById("skillFilter").addEventListener("input", () => {
+      getAllSkills();
+    });
+
+    //スキル名でソート
+    document.getElementById("sortBySkillButton").addEventListener("click", () => {
+      allSkills.sort((a, b) => a.skill.localeCompare(b.skill, "ja"));
+      renderSkills();
+    });
+
+    //ユーザー名でソート
+    document.getElementById("sortByNameButton").addEventListener("click", () => {
+      allSkills.sort((a, b) => a.name.localeCompare(b.name, "ja"));
+      renderSkills();
+    });
+
+    //ユーザー一覧をテーブルに表示
+    function renderUsers() {
+      const userTable = document.getElementById("userTable");
+      userTable.innerHTML = "";
+
+      allUsers.forEach(user => {
+        const row = document.createElement("tr");
+
+        //ユーザー行クリック時：該当ユーザーのスキル取得
+        row.addEventListener("click", () => {
+          fetch(`/api/skills?userId=${user.id}`)
+            .then(response => response.json())
+            .then(skills => {
+              const skillList = document.getElementById("skillList");
+              skillList.innerHTML = "";
+
+              skills.forEach(skill => {
+                const li = document.createElement("li");
+                li.textContent = skill;
+                skillList.appendChild(li);
+              });
+            });
+        });
+
+        const idCell = document.createElement("td");
+        idCell.textContent = user.id;
+
+        const nameCell = document.createElement("td");
+        nameCell.textContent = user.name;
+
+        const editCell = document.createElement("td");
+        const editButton = document.createElement("button");
+        editButton.textContent = "編集";
+
+        //編集ボタン押下時：ユーザー名更新
+        editButton.addEventListener("click", (event) => {
+          event.stopPropagation();
+
+          const newName = prompt("新しい名前を入力してください", user.name);
+
+          if (newName === null) {
+            return;
+          }
+
+          if (newName.trim() === "") {
+            alert("名前を入力してください");
+            return;
+          }
+
+          fetch(`/api/users/${user.id}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ name: newName })
+          })
+          .then(response => response.text())
+          .then(data => {
+            alert(data);
+            document.getElementById("getButton").click();
+          });
+        });
+
+        editCell.appendChild(editButton);
+
+        const deleteCell = document.createElement("td");
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "削除";
+
+        //削除ボタン押下時：該当ユーザー削除
+        deleteButton.addEventListener("click", (event) => {
+          event.stopPropagation();
+
+          fetch(`/api/users/${user.id}`, {method: "DELETE"})
+          .then(response => response.text())
+          .then(data => {
+            alert(data);
+            document.getElementById("getButton").click();
+            document.getElementById("getSkillsButton").click();
+            document.getElementById("skillList").innerHTML = "";
+          });
+        });
+
+        deleteCell.appendChild(deleteButton);
+
+        row.appendChild(idCell);
+        row.appendChild(nameCell);
+        row.appendChild(editCell);
+        row.appendChild(deleteCell);
+
+        userTable.appendChild(row);
+      });
+    }
+
+    document.getElementById("getButton").click();
+    document.getElementById("getSkillsButton").click();
+
+  </script>
+
+</body>
+
 </html>
