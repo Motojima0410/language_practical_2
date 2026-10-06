@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8">
+    <title>ユーザーリスト</title>
+  </head>
+
+  <body>
+    <h1>ユーザーリスト</h1>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>名前</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="user : ${users}">
+          <td th:text="${user.id}"></td>
+          <td th:text="${user.name}"></td>
+        </tr>
+      </tbody>
+    </table>
+    <p th:if="${users.isEmpty()}">データがありません</p>
+
+    <h2>スキル一覧</h2>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>スキル</th>
+          <th>名前</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="item : ${skills}">
+          <td th:text="${item.skill}"></td>
+          <td th:text="${item.name}"></td>
+        </tr>
+      </tbody>
+    </table>
+    <p th:if="${skills.isEmpty()}">データがありません</p>
+  </body>
+
+</html>
