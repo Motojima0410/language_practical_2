@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>ユーザーリスト</title>
+</head>
+
+<body>
+  <p><a href="/skills">スキル画面へ</a></p>
+  <h1>ユーザーリスト</h1>
+
+  <form action="/users" method="get">
+    <input type="text" name="name" th:value="${name}" placeholder="名前で絞り込み">
+    <button type="submit">検索</button>
+  </form>
+
+  <table border="1">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>名前</th>
+        <th>選択</th>
+        <th>編集</th>
+        <th>削除</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="user : ${users}">
+        <td th:text="${user.id}"></td>
+        <td th:text="${user.name}"></td>
+        <td>
+          <a th:href="@{/users(userId=${user.id})}">選択</a>
+        </td>
+        <td>
+          <form action="/users/update" method="post">
+            <input type="hidden" name="id" th:value="${user.id}">
+            <input type="text" name="name" th:value="${user.name}">
+            <button type="submit">更新</button>
+          </form>
+        </td>
+        <td>
+          <form action="/users/delete" method="post">
+            <input type="hidden" name="id" th:value="${user.id}">
+            <button type="submit">削除</button>
+          </form>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p th:if="${users.isEmpty()}">データがありません</p>
+
+  <h2>ユーザー登録</h2>
+  <form action="/users" method="post">
+    <input type="text" name="name" placeholder="名前を入力">
+    <button type="submit">登録</button>
+  </form>
+
+  <div th:if="${userId != null}">
+    <h2><span th:text="${selectedName}"></span>さんのスキル</h2>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>スキル</th>
+          <th>編集</th>
+          <th>削除</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="item : ${selectedSkills}">
+          <td th:text="${item.skill}"></td>
+          <td>
+            <form action="/users/skill/update" method="post">
+              <input type="hidden" name="id" th:value="${item.id}">
+              <input type="hidden" name="userId" th:value="${userId}">
+              <input type="text" name="skill" th:value="${item.skill}">
+              <button type="submit">更新</button>
+            </form>
+          </td>
+          <td>
+            <form action="/users/skill/delete" method="post">
+              <input type="hidden" name="id" th:value="${item.id}">
+              <input type="hidden" name="userId" th:value="${userId}">
+              <button type="submit">削除</button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p th:if="${selectedSkills.isEmpty()}">データがありません</p>
+
+    <h2>スキル登録</h2>
+    <form action="/users/skill" method="post">
+      <input type="hidden" name="userId" th:value="${userId}">
+      <input type="text" name="skill" placeholder="スキル名">
+      <button type="submit">登録</button>
+    </form>
+  </div>
+</body>
+
+</html>
