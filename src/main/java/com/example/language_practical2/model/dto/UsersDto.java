@@ -1,15 +1,13 @@
-package com.example.language_practical2;
+package com.example.language_practical2.model.dto;
 
 import java.math.BigDecimal;
 
-public class Skills {
+public class UsersDto {
   private BigDecimal id;
-  private String skill;
   private String name;
 
-  public Skills(BigDecimal id, String skill, String name) {
+  public UsersDto(BigDecimal id, String name) {
     this.id = id;
-    this.skill = skill;
     this.name = name;
   }
 
@@ -21,14 +19,6 @@ public class Skills {
     return id;
   }
 
-  public void setSkill(String skill) {
-    this.skill = skill;
-  }
-
-  public String getSkill() {
-    return skill;
-  }
-
   public void setName(String name) {
     this.name = name;
   }
@@ -36,5 +26,4 @@ public class Skills {
   public String getName() {
     return name;
   }
-
 }
